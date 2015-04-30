@@ -7,6 +7,7 @@ gdouble g_homoH[4][3][3] = {
 ,{ {6.0, -1.0, -2000.0}, {-1.0, 6.0, -1600.0}, {0, 0, 1} }
 ,{ {4.0, 0.0,     0.0}, {0.0, 4.0,     0.0}, {0, 0, 1} }
 };
+//准备好4个单应矩阵，最多变换4幅图像（源图像视角到目标图像视角的但应变换的逆变换？）
 
 static void imageTransform(gdouble xin, gdouble yin, gdouble *xout, gdouble *yout, gint imgid)
 {
@@ -24,16 +25,16 @@ static gint algo_stitch_handle(
         nums = 4;
     
     gint dstW = pout_image[0].width;
-    gint dstH = pout_image[0].height;
-    gint dstL = pout_image[0].linesize;
+    gint dstH = pout_image[0].height;//dongliang:结构体ImageInfo的定义在哪里，看一下里面都有些什么东西
+    gint dstL = pout_image[0].linesize;//dongliang:这里的linesize是个什么含义？
     guchar *dstY = pout_image[0].buf;
-    guchar *dstU = dstY + dstL*dstH;
+    guchar *dstU = dstY + dstL*dstH;//dongliang:为什么这里是dstL*dstH，而下面的V分量是dstL*dstH/4？
     guchar *dstV = dstU + dstL*dstH/4;
 
     g_print("dstL:%d. dstW:%d. dstH:%d.\n", dstL, dstW, dstH);
-    memset(dstY, 0, dstL*dstH);
+    memset(dstY, 0, dstL*dstH);//dongliang:初始状态申请dstL*dstH多的无符号字符，填充为空
     memset(dstU, 128, dstL*dstH/4);
-    memset(dstV, 128, dstL*dstH/4);
+    memset(dstV, 128, dstL*dstH/4);//dongliang:为什么这里和上面都是dstL*dstH/4？
 
     gint t;
     gint x, y, xx, yy; //image coordinates
